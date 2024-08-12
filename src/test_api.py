@@ -21,23 +21,39 @@ def test_get(client):
     assert r.json() == {"message": "Welcome!"}
 
 
-def test_get_malformed(client):
-    r = client.get("/oops")
-    assert r.status_code != 200
-
-
-
-def test_post_malformed(client):
+def test_inference_case1(client):
     r = client.post("/", json={
-        "age": 28,
+        "age": 16,
         "workclass": "Private",
-        "education": " Bachelors",
-        "maritalStatus": " Married-civ-spouse",
-        "occupation": " Prof-specialty",
-        "relationship": " Wife",
+        "education": "HS-grad",
+        "maritalStatus": "Never-married",
+        "occupation": "Other-service",
+        "relationship": "Own-child",
         "race": "Black",
-        "sex": "Female",
+        "sex": "Male",
         "hoursPerWeek": 40,
-        "nativeCountry": "Cuba"
+        "nativeCountry": "United-States"
     })
-    assert r.status_code != 200
+    assert r.status_code == 200
+    assert r.json() == {"prediction": "<=50K"}
+
+
+def test_inference_case2(client):
+    r = client.post("/", json={
+        "age": 31,
+        "workclass": "Private",
+        "education": "Masters",
+        "maritalStatus": "Never-married",
+        "occupation": "Prof-speciality",
+        "relationship": "Not-in-family",
+        "race": "White",
+        "sex": "Male",
+        "hoursPerWeek": 40,
+        "nativeCountry": "United-States"
+    })
+    assert r.status_code == 200
+    assert r.json() == {"prediction": ">50K"}
+
+
+
+
